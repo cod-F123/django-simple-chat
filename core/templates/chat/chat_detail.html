@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <div id="message-list">
+        {% for message in chat.messages.all %}
+            
+            {% if  message.sender.id == user.id %}
+                <p style="color: blue;">{{message.text}}</p>
+            {% else %}
+                <p style="color: red;">{{message.text}}</p>
+            {% endif %}
+
+        {% endfor %}
+            
+    </div>
+    <div>
+        <p><input type="text" id="text-input"> <button id="send-message">send</button></p>
+    </div>
+
+
+    <script>
+        const websocket = new WebSocket("ws://"+window.location.host+"/ws/chat/{{chat.chat_id}}/")
+
+        const messageList = document.getElementById("message-list");
+        const sendMessage = document.getElementById("send-message");
+        const textMessage = document.getElementById("text-input");
+
+        websocket.onmessage = function(event){
+            const data = JSON.parse(event.data);
+            console.log(data)
+            messageList.innerHTML += `<p style='color:red'> ${data.get("text")}</p>`;
+        };
+
+        sendMessage.addEventListener("click", function(e){
+            send_message()
+        })
+
+        function send_message(){
+            const text = textMessage.value;
+
+            websocket.send(text);
+            messageList.innerHTML += `<p style='color:red'> ${text}</p>`;
+
+            textMessage.value = "" ;
+        }
+
+
+
+        
+    </script>
+
+
+
+{% endblock content %}
+    

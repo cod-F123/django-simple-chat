@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <div >
+        <ul>
+            {% for chat in chats %}
+                <li><a href="{% url 'chat:chat-detail' chat.chat.chat_id %}">{{chat.chat.id}}   -  {{chat.chat.chat_type}} -- {{chat.chat.created_date}}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}
+    

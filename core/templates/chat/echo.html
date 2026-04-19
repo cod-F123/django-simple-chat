@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+    
+
+    <div >
+
+        <textarea name="" id="Console">
+
+        </textarea>
+
+        <br>
+        <p>
+            <input type="text" id="echo-input">
+            <button type="button" id="send-text">Send</button>
+        </p>
+    </div>
+
+
+
+<script>
+    const websocket = new WebSocket("ws://"+ window.location.host + "/ws/echo/")
+    
+
+    websocket.onmessage = function(event){
+        const text = event.data;
+
+        document.getElementById("Console").value += text+ "\n";
+    }
+
+    document.getElementById("send-text").addEventListener("click", function(){
+        send_text_to_echo()
+    })
+
+    function send_text_to_echo(){
+        const text_input = document.getElementById("echo-input");
+        websocket.send(data= text_input.value);
+        text_input.value = "";
+    }
+
+
+</script>
+
+{% endblock content %}
+    
