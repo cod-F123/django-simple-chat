@@ -2,12 +2,17 @@
 
 
 {% block content %}
-    <div >
-        <ul>
-            {% for chat in chats %}
-                <li><a href="{% url 'chat:chat-detail' chat.chat.chat_id %}">{{chat.chat.id}}   -  {{chat.chat.chat_type}} -- {{chat.chat.created_date}}</a></li>
-            {% endfor %}
-        </ul>
+    <div class="chat-list-header rounded bg-body-secondary p-2">
+        <h1 class="h3 text-center ">Chat List</h1>
+    </div>
+
+    <div class="chat-list d-flex flex-column gap-2 mt-3">
+        {% for chat in chats %}
+            <a href="{% url 'chat:chat-detail' chat.chat_id %}" class="chat-item d-flex align-items-center justify-content-between mx-2 btn btn-primary">
+                <h3 class="h5 p-0 m-0">{{ chat.title }}</h3>
+                <span class="fw-bold">0</span>
+            </a>
+        {% endfor %}
     </div>
 {% endblock content %}
     

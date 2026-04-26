@@ -11,6 +11,8 @@ class MessageInlineAdmin(admin.StackedInline):
     model = Message
     extra = 1
 
+    readonly_fields = ["sended_date"]
+
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
     list_display = ['title', 'chat_type', 'created_date']

@@ -2,55 +2,130 @@
 
 
 {% block content %}
+    <div class="chat-header position-relative rounded bg-body-secondary p-2">
+        <h1 class="h3 text-center ">{{ chat.title }}</h1>
+        <span class="badge position-absolute bg-body-tertiary text-body-emphasis" style="bottom: 10px; right: 10px">{{ chat.members_count }}</span>
+    </div>
     <div id="message-list">
         {% for message in chat.messages.all %}
             
-            {% if  message.sender.id == user.id %}
-                <p style="color: blue;">{{message.text}}</p>
+            {% if  message.sender == user %}
+                <div class="row message-item flex-column align-items-end ">
+                    <div class="user-display-name  me-1 fw-bold ">You</div>
+                    <div class="message bg-body-secondary rounded me-3 text-body-emphasis mt-1 p-2 pb-3 position-relative" id="message-id">
+                        <div class="markdown-content">{{message.text}}</div>
+                        <span class="position-absolute date badge start-0 bottom-0 text-body-emphasis">{{message.sended_date|date:"H : m"}}</span>
+                    </div>
+                </div>
             {% else %}
-                <p style="color: red;">{{message.text}}</p>
+                <div class="row message-item flex-column align-items-start">
+                    <div class="user-display-name fw-bold ms-1">{{message.sender.username}}</div>
+                    <div class="message bg-body-secondary rounded ms-3 text-body-emphasis mt-1 p-2 pb-3 position-relative" id="message-id">
+                        <div class="markdown-content">{{message.text}}</div>
+                        <span class="position-absolute date badge end-0 bottom-0 text-body-emphasis">{{message.sended_date|date:"H : m"}}</span>
+                    </div>
+                </div>
             {% endif %}
 
         {% endfor %}
             
     </div>
-    <div>
-        <p><input type="text" id="text-input"> <button id="send-message">send</button></p>
+    
+    <div class="d-flex input-hub justify-content-between align-items-center mx-1 p-1 rounded-2 bg-secondary my-1">
+        <textarea  id="text-input" class="bg-secondary border-0 text-light w-75" placeholder="Enter ..."></textarea>
+        <div class="btn-group gap-1">
+            <button class="btn  btn-warning">File</button>
+            <button class="btn  btn-primary" id="send-message">send</button>
+        </div>
     </div>
 
 
+
+
+
+
+
+{% endblock content %}
+
+
+{% block extra_js %}
     <script>
         const websocket = new WebSocket("ws://"+window.location.host+"/ws/chat/{{chat.chat_id}}/")
 
-        const messageList = document.getElementById("message-list");
+        const messageList = $("#message-list");
         const sendMessage = document.getElementById("send-message");
         const textMessage = document.getElementById("text-input");
 
+        $(window).on("load", function(){
+            messageList.scrollTop(messageList[0].scrollHeight);
+            document.querySelectorAll('.markdown-content').forEach(element => {
+                const rawMarkdown = element.innerText; // گرفتن متن خام
+                const parsedHtml = marked.parse(rawMarkdown);
+                const cleanHtml = DOMPurify.sanitize(parsedHtml);
+                element.innerHTML = cleanHtml;
+                
+            });
+            
+        })
+        
         websocket.onmessage = function(event){
-            const data = JSON.parse(event.data);
+            const data = JSON.parse(event.data)
             console.log(data)
-            messageList.innerHTML += `<p style='color:red'> ${data.get("text")}</p>`;
+
+            const messageHtml = marked.parse(data.text);
+            const clean = DOMPurify.sanitize(messageHtml);
+
+            messageList.append(`
+             <div class="row message-item flex-column align-items-start">
+                    <div class="user-display-name fw-bold ms-1">USERNAME</div>
+                    <div class="message bg-body-secondary rounded ms-3 text-body-emphasis mt-1 p-2 pb-3 position-relative" id="message-${data.message_id}">
+                        <p class="markdown-content">${clean}</p>
+                        <span class="position-absolute date badge start-0 bottom-0 text-body-emphasis">TIME</span>
+                    </div>
+                </div>
+            `.replace("USERNAME", data.sender).replace("TIME",data.sended_at));
+            messageList.scrollTop(messageList[0].scrollHeight);
         };
 
         sendMessage.addEventListener("click", function(e){
-            send_message()
+            if (String(textMessage.value).trim()){
+                send_message()
+            }
         })
 
         function send_message(){
             const text = textMessage.value;
 
+            const messageHtml = marked.parse(text);
+
+            const clean = DOMPurify.sanitize(messageHtml);
             websocket.send(text);
-            messageList.innerHTML += `<p style='color:red'> ${text}</p>`;
+
+            const tempMessageID =  Date.now();
+            let now = new Date();
+
+            // استخراج ساعت و دقیقه
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+
+            // اضافه کردن صفر اگر دقیقه یا ساعت کمتر از 10 باشد
+            if (minutes < 10) minutes = '0' + minutes;
+            if (hours < 10) hours = '0' + hours;
+            messageList.append(`
+                <div class="row flex-column align-items-end ">
+                    <div class="user-display-name  me-1 fw-bold ">You</div>
+                    <div class="message bg-body-secondary rounded me-3 text-body-emphasis mt-1 p-2  position-relative" id="message-${tempMessageID}">
+                       <p class="markdown-content">${clean}</p>
+                       <span class="position-absolute date badge end-0 bottom-0 text-body-emphasis">${hours} : ${minutes}</span>
+                    </div>
+                </div>
+            `);
+
+            messageList.scrollTop(messageList[0].scrollHeight);
 
             textMessage.value = "" ;
         }
-
-
-
-        
     </script>
-
-
-
-{% endblock content %}
+{% endblock extra_js %}
+    
     

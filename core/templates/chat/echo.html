@@ -5,17 +5,24 @@
 {% block content %}
     
 
-    <div >
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 bg-secondary col-md-6 mt-5 p-2 rounded">
 
-        <textarea name="" id="Console">
+                <textarea name="" class="form-control border-2 border-info bg-dark text-light" style="height: 400px;" id="Console">
+                <========== Log ==========>
+                </textarea>
 
-        </textarea>
+                <br>
+                <p>
+                    <div class="">
+                        <input type="text" class="form-control border-2 border-info bg-dark text-light mb-1 form-sm" id="echo-input">
+                        <button type="button" class="btn btn-dark" id="send-text">Send</button>
+                    </div>
+                </p>
 
-        <br>
-        <p>
-            <input type="text" id="echo-input">
-            <button type="button" id="send-text">Send</button>
-        </p>
+            </div>
+        </div>
     </div>
 
 
@@ -27,7 +34,7 @@
     websocket.onmessage = function(event){
         const text = event.data;
 
-        document.getElementById("Console").value += text+ "\n";
+        document.getElementById("Console").value += ">> "+text+ "\n";
     }
 
     document.getElementById("send-text").addEventListener("click", function(){

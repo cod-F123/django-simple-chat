@@ -29,7 +29,7 @@ class Chat(models.Model):
 
     @property
     def members_count(self):
-        return 1
+        return self.members.count()
     
     def save(self, *args, **kwargs):
 

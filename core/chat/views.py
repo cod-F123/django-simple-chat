@@ -10,12 +10,12 @@ class EchoView(TemplateView):
     template_name = 'chat/echo.html'
 
 class ChatListView(LoginRequiredMixin, ListView):
-    model = Member
+    model = Chat
     template_name = 'chat/chat_list.html'
     context_object_name = "chats"
 
     def get_queryset(self):
-        chats = self.model.objects.filter(user = self.request.user)
+        chats = self.model.objects.filter(members__user = self.request.user)
 
         return chats
     
@@ -26,9 +26,9 @@ class ChatDetailView(LoginRequiredMixin, DetailView):
     pk_url_kwarg = 'chat_id'
 
     def get_object(self, chat_id):
-        chat = get_object_or_404(Chat, chat_id = chat_id)
+        chat = get_object_or_404(Member, chat__chat_id = chat_id, user = self.request.user)
 
-        return chat
+        return chat.chat
     
     def get(self, request, *args, **kwargs):
       
