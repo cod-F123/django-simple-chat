@@ -43,7 +43,7 @@ Ensure Redis is installed and running on your system. It’s typically started w
 5. **Create .env file and set Environment valuable**
 ```env
 SECRET_KEY = 'youre_secret_key'
-DEBUG = True # in productions False
+DEBUG = True # in production False
 ALLOWED_HOSTS = 'localhost,127.0.0.1' # seprate with ,
 CHANNEL_HOST = #default redis://127.0.0.1:6379
 ```
