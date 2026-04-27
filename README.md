@@ -40,15 +40,23 @@ pip install -r requirements.txt
 
 Ensure Redis is installed and running on your system. It’s typically started with the command redis-server.
 
-5. **Run Django Migrations:**
+5. ** Create .env file and set Environment valuable**
+```env
+SECRET_KEY = 'youre_secret_key'
+DEBUG = True # in productions False
+ALLOWED_HOSTS = 'localhost,127.0.0.1' # seprate with ,
+CHANNEL_HOST = #default redis://127.0.0.1:6379
+```
+
+7. **Run Django Migrations:**
 ```bash
 pyhton manage.py migrate
 ```
-6. **Create a Superuser (Optional):**
+7. **Create a Superuser (Optional):**
 ```bash
 python manage.py createsuperuser
 ```
-7. **Run the Django Development Server:**
+8. **Run the Django Development Server:**
 ```bash
 python manage.py runserver
 ```
