@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 Ensure Redis is installed and running on your system. It’s typically started with the command redis-server.
 
-5. ** Create .env file and set Environment valuable**
+5. **Create .env file and set Environment valuable**
 ```env
 SECRET_KEY = 'youre_secret_key'
 DEBUG = True # in productions False
