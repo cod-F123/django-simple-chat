@@ -99,7 +99,7 @@
     max-width: 70% !important;
     width: max-content;;
     overflow-x: hidden;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 500;
     min-width: 50px;
 }
@@ -113,3 +113,21 @@
     font-size: 10px;
     opacity: .7;
 }
+
+.rounded-bottom-start-0{
+    border-bottom-left-radius: 0 !important;
+}
+.rounded-bottom-end-0{
+    border-bottom-right-radius: 0 !important;
+}
+
+.bg-custom-dark{
+    background-color: #1d1d1e !important;
+}
+
+.bg-custom-primary{
+    background-color: #4435b2;
+}
+.bg-custom-secondary{
+    background-color: #121417;
+}   

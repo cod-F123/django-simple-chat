@@ -9,4 +9,4 @@ def inital_chat(sender, instance , created, **kwargs):
         Member.objects.create(chat= instance, user = instance.owner)
 
         if instance.chat_type != 'Private':
-            Message.objects.create(chat= instance, sender = instance.owner, message_type = 'System', text = "chat created")
+            Message.objects.create(chat= instance, sender = instance.owner, message_type = 'System', text = f"{instance.chat_type} created")

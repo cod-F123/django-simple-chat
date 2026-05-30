@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'daphne',
     'chat',
+    'accounts',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -144,3 +145,6 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,"media")
+
+
+LOGIN_SUCCESS_URL = "chat:chat-list"

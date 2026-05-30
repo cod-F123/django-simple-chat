@@ -1,38 +1,61 @@
 {% extends "base.html" %}
 
 
-{% block content %}
-    <div class="chat-header position-relative rounded bg-body-secondary p-2">
-        <h1 class="h3 text-center ">{{ chat.title }}</h1>
-        <span class="badge position-absolute bg-body-tertiary text-body-emphasis" style="bottom: 10px; right: 10px">{{ chat.members_count }}</span>
+{% block chat_content %}
+    <div class="chat-header d-flex justify-content-between position-relative rounded bg-body-secondary p-2">
+        <h1 class="h3 text-center text-white">
+            {% if chat.chat_type == 'Private' %}
+                {% for member in chat.members.all %}
+                    {% if member.user.username != user.username %}
+                        {{member.user.username}}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {{chat.title}}
+            {% endif %}
+        </h1>
+        <a
+            class="btn btn-primary"
+            href="{% url 'chat:chat-list' %}"
+            role="button"
+            >Home</a
+        >
+        
+        <span class="badge position-absolute bg-body-tertiary text-body-emphasis" style="bottom: 3px; left: 10px; font-size: 10px !important;">{{ chat.members_count }}</span>
     </div>
     <div id="message-list">
         {% for message in chat.messages.all %}
-            
-            {% if  message.sender == user %}
-                <div class="row message-item flex-column align-items-end ">
-                    <div class="user-display-name  me-1 fw-bold ">You</div>
-                    <div class="message bg-body-secondary rounded me-3 text-body-emphasis mt-1 p-2 pb-3 position-relative" id="message-id">
-                        <div class="markdown-content">{{message.text}}</div>
-                        <span class="position-absolute date badge start-0 bottom-0 text-body-emphasis">{{message.sended_date|date:"H : m"}}</span>
-                    </div>
+            {% if message.message_type == "System" %}
+                <div class="row message-item flex-column align-items-center mt-2 ">
+                    <div class="text-center h6 bg-secondary rounded py-2 px-2 text-white" style="width: max-content;">{{message.text}}</div>
                 </div>
             {% else %}
-                <div class="row message-item flex-column align-items-start">
-                    <div class="user-display-name fw-bold ms-1">{{message.sender.username}}</div>
-                    <div class="message bg-body-secondary rounded ms-3 text-body-emphasis mt-1 p-2 pb-3 position-relative" id="message-id">
-                        <div class="markdown-content">{{message.text}}</div>
-                        <span class="position-absolute date badge end-0 bottom-0 text-body-emphasis">{{message.sended_date|date:"H : m"}}</span>
+            
+                {% if  message.sender == user %}
+                    <div class="row message-item flex-column align-items-end ">
+                        <div class="user-display-name  me-1 fw-bold ">You</div>
+                        <div class="message bg-custom-primary rounded-bottom-end-0 rounded me-3 text-white mt-1 p-2 pb-3 position-relative" id="message-id">
+                            <div class="markdown-content " dir="auto">{{message.text}}</div>
+                            <span class="position-absolute date badge start-0 bottom-0 text-body-emphasis">{{message.sended_date|date:"H : m"}}</span>
+                        </div>
                     </div>
-                </div>
+                {% else %}
+                    <div class="row message-item flex-column align-items-start">
+                        <div class="user-display-name fw-bold ms-1">{{message.sender.username}}</div>
+                        <div class="message bg-custom-dark rounded-bottom-start-0 rounded ms-3 text-body-emphasis mt-1 p-2 pb-3 position-relative" id="message-id">
+                            <div class="markdown-content " dir="auto">{{message.text}}</div>
+                            <span class="position-absolute date badge end-0 bottom-0 text-body-emphasis">{{message.sended_date|date:"H : m"}}</span>
+                        </div>
+                    </div>
+                {% endif %}
             {% endif %}
 
         {% endfor %}
             
     </div>
     
-    <div class="d-flex input-hub justify-content-between align-items-center mx-1 p-1 rounded-2 bg-secondary my-1">
-        <textarea  id="text-input" class="bg-secondary border-0 text-light w-75" placeholder="Enter ..."></textarea>
+    <div class="d-flex input-hub justify-content-between align-items-center mx-1 p-1 rounded-2 bg-custom-secondary my-1">
+        <textarea  id="text-input" class="bg-custom-secondary border-0 text-light w-75" placeholder="Enter ..." dir="auto"></textarea>
         <div class="btn-group gap-1">
             <button class="btn  btn-warning">File</button>
             <button class="btn  btn-primary" id="send-message">send</button>
@@ -45,11 +68,19 @@
 
 
 
-{% endblock content %}
+{% endblock chat_content %}
 
 
 {% block extra_js %}
     <script>
+
+        function onloadFuction(text, element){
+            const rawMarkdown = text; // گرفتن متن خام
+            const parsedHtml = marked.parse(rawMarkdown);
+            const cleanHtml = DOMPurify.sanitize(parsedHtml);
+            console.log(cleanHtml)
+            element.innerHTML = cleanHtml;
+        }
         const websocket = new WebSocket("ws://"+window.location.host+"/ws/chat/{{chat.chat_id}}/")
 
         const messageList = $("#message-list");
@@ -59,7 +90,7 @@
         $(window).on("load", function(){
             messageList.scrollTop(messageList[0].scrollHeight);
             document.querySelectorAll('.markdown-content').forEach(element => {
-                const rawMarkdown = element.innerText; // گرفتن متن خام
+                const rawMarkdown = element.textContent; // گرفتن متن خام
                 const parsedHtml = marked.parse(rawMarkdown);
                 const cleanHtml = DOMPurify.sanitize(parsedHtml);
                 element.innerHTML = cleanHtml;
@@ -67,6 +98,7 @@
             });
             
         })
+
         
         websocket.onmessage = function(event){
             const data = JSON.parse(event.data)
@@ -78,8 +110,8 @@
             messageList.append(`
              <div class="row message-item flex-column align-items-start">
                     <div class="user-display-name fw-bold ms-1">USERNAME</div>
-                    <div class="message bg-body-secondary rounded ms-3 text-body-emphasis mt-1 p-2 pb-3 position-relative" id="message-${data.message_id}">
-                        <p class="markdown-content">${clean}</p>
+                    <div class="message bg-custom-dark rounded-bottom-start-0 rounded rounded-start-0 ms-3 text-body-emphasis mt-1 p-2 pb-3 position-relative" id="message-${data.message_id}">
+                        <p class="markdown-content" dir="auto">${clean}</p>
                         <span class="position-absolute date badge start-0 bottom-0 text-body-emphasis">TIME</span>
                     </div>
                 </div>
@@ -114,8 +146,8 @@
             messageList.append(`
                 <div class="row flex-column align-items-end ">
                     <div class="user-display-name  me-1 fw-bold ">You</div>
-                    <div class="message bg-body-secondary rounded me-3 text-body-emphasis mt-1 p-2  position-relative" id="message-${tempMessageID}">
-                       <p class="markdown-content">${clean}</p>
+                    <div class="message bg-custom-primary rounded-bottom-end-0 rounded me-3 text-white mt-1 p-2  position-relative" id="message-${tempMessageID}">
+                       <p class="markdown-content" dir="auto">${clean}</p>
                        <span class="position-absolute date badge end-0 bottom-0 text-body-emphasis">${hours} : ${minutes}</span>
                     </div>
                 </div>
