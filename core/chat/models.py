@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.utils import timezone
 import uuid
 
@@ -37,6 +38,10 @@ class Chat(models.Model):
             self.chat_id = str(uuid.uuid4()).replace("-","")[:20] + str(timezone.now().microsecond)
         
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("chat:chat-detail", kwargs={"chat_id": self.chat_id})
+    
 
 class Member(models.Model):
 

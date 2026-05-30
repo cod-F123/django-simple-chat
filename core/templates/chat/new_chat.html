@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div id="Loading" class="col-md-4 d-none z-3">
+            <h2 class="text-white display-1 text-center">Loading ....</h2>
+        </div>
+        <div class="col-md-4 z-0" id="content">
+            <div class="card">
+                <div class="card-header">New Chat</div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <button class="btn btn-success fw-semibold" data-bs-toggle="modal" data-bs-target="#modalAddContact">Add Contact</button>
+                        <button class="btn btn-primary fw-semibold" type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalNewChannel">Create Channel</button>
+                        <button class="btn btn-info fw-semibold" data-bs-toggle="modal" data-bs-target="#modalNewGroup">Create Group</button>
+                    </div>
+                </div>
+                <div class="card-footer text-center text-body-emphasis">Return to <a href="{% url 'chat:chat-list' %}" class="link-info">chat list</a></div>
+            </div>
+            
+        </div>
+    </div>
+
+
+    
+    <div
+        class="modal fade"
+        id="modalNewChannel"
+        tabindex="-1"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        
+        role="dialog"
+        aria-labelledby="newChannel"
+        aria-hidden="false"
+    >
+        <div
+            class="modal-dialog modal-dialog-scrollable modal-dialog-centered "
+            role="document"
+        >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newChannel">
+                        Create new channel
+                    </h5>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+                </div>
+                <form data-chat-type="Channel" class="form-data">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="chatTitle" class="form-label">Title</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="title"
+                                id="chatTitle"
+                                placeholder=""
+                                required
+                            />
+                            <small class="form-text text-danger error-message"
+                                ></small
+                            >
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                        <button type="submit" data-bs-dismiss="modal"  class="btn btn-primary" >Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="modal fade"
+        id="modalNewGroup"
+        tabindex="-1"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        
+        role="dialog"
+        aria-labelledby="newGroup"
+        aria-hidden="false"
+    >
+        <div
+            class="modal-dialog modal-dialog-scrollable modal-dialog-centered "
+            role="document"
+        >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newGroup">
+                        Create new group
+                    </h5>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+                </div>
+                <form data-chat-type="Group" class="form-data">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="groupTitle" class="form-label">Title</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="title"
+                                id="groupTitle"
+                                placeholder=""
+                                required
+                            />
+                            <small class="form-text text-danger error-message"
+                                ></small
+                            >
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                        <button type="submit" data-bs-dismiss="modal"  class="btn btn-primary" >Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div
+        class="modal fade"
+        id="modalAddContact"
+        tabindex="-1"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        
+        role="dialog"
+        aria-labelledby="addContact"
+        aria-hidden="false"
+    >
+        <div
+            class="modal-dialog modal-dialog-scrollable modal-dialog-centered "
+            role="document"
+        >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addContact">
+                        Add new Contact
+                    </h5>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+                </div>
+                <form  id="add-contact-form">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="usernameContact" class="form-label">user</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="contact"
+                                id="useranmeContact"
+                                placeholder="username"
+                                required
+                            />
+                            <small class="form-text text-danger error-message-contact"
+                                ></small
+                            >
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                        <button type="submit"  class="btn btn-primary" >Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+{% endblock content %}
+
+
+{% block extra_js %}
+    <script>
+        const loadinDiv = $("#Loading");
+        const contentDiv = $("#content");
+
+        $(".form-data").on("submit", function(e){
+            loadinDiv.removeClass("d-none");
+            contentDiv.addClass("d-none");
+
+            e.preventDefault();
+
+            let title ="";
+            
+            const chat_type = $(this).data("chat-type");
+            if (chat_type == 'Channel') {
+                title = $("#chatTitle").val();
+            }else{
+                title = $("#groupTitle").val();
+            }
+
+            console.log(title)
+            $.ajax({
+                method : "POST",
+                url : "{% url 'chat:create-chat' %}",
+                data : {
+                    title : title,
+                    chat_type : chat_type,
+                    csrfmiddlewaretoken : "{{csrf_token}}"
+                },
+                success : function(res){
+                    window.location.href = res.details.chat_url;
+                },
+                error : function(xhr, status, error){
+                    
+                }
+            });
+
+            loadinDiv.addClass("d-none");
+            contentDiv.removeClass("d-none");
+            
+        })
+
+        $("#add-contact-form").on("submit", function(e){
+            e.preventDefault();
+
+            loadinDiv.removeClass("d-none");
+            contentDiv.addClass("d-none");
+
+            const contact = $("#useranmeContact").val();
+            $.ajax({
+                method : "POST",
+                url : "{% url 'chat:add-contact' %}",
+                data : {
+                    contact : contact,
+                    csrfmiddlewaretoken : "{{csrf_token}}"
+                },
+                success : function(res){
+                    window.location.href = res.details.chat_url;
+                },
+                error : function(xhr, status, error){
+                    $(".error-message-contact").html(JSON.parse(xhr.responseText).details.errors.__all__)
+                }
+            });
+
+            loadinDiv.addClass("d-none");
+            contentDiv.removeClass("d-none");
+
+        })
+    </script>
+{% endblock extra_js %}
+    

@@ -1,18 +1,57 @@
 {% extends "base.html" %}
 
 
-{% block content %}
-    <div class="chat-list-header rounded bg-body-secondary p-2">
+{% block chat_content %}
+    <div class="chat-list-header justify-content-between d-flex rounded bg-body-secondary p-2">
         <h1 class="h3 text-center ">Chat List</h1>
+        <div class="d-flex gap-2 align-items-center">
+           <div>
+               
+               <a href="{% url 'chat:new-chat' %}" class="btn btn-primary btn-sm">New Chat</a> 
+                
+            </div>
+            <form method="POST" action="{% url 'accounts:logout-user' %}">
+                {% csrf_token %}
+                <button
+                    class="btn btn-danger btn-sm"
+                    role="button"
+                    type="submit"
+                    >Logout</button
+                >
+            </form>
+        </div>
+    
+        
     </div>
 
     <div class="chat-list d-flex flex-column gap-2 mt-3">
         {% for chat in chats %}
-            <a href="{% url 'chat:chat-detail' chat.chat_id %}" class="chat-item d-flex align-items-center justify-content-between mx-2 btn btn-primary">
-                <h3 class="h5 p-0 m-0">{{ chat.title }}</h3>
-                <span class="fw-bold">0</span>
+            <a href="{% url 'chat:chat-detail' chat.chat_id %}" class="chat-item d-flex align-items-center justify-content-between mx-2 btn btn-primary bg-custom-primary">
+                <h3 class="h5 p-0 m-0">
+                    {% if chat.chat_type == 'Private' %}
+                        {% for member in chat.members.all %}
+                            {% if member.user.username != user.username %}
+                                {{member.user.username}}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {{chat.title}}
+                    {% endif %}
+                </h3>
+                <button
+                    class="btn btn-primary badge"
+                >
+                    new
+                    <span
+                        class="badge bg-danger"
+                        >12</span
+                    >
+                </button>
+                
             </a>
         {% endfor %}
     </div>
-{% endblock content %}
+
+    
+{% endblock chat_content %}
     
